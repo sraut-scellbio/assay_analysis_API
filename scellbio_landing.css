@@ -1,0 +1,32 @@
+body{
+  /*background: gray;*/
+  background: url('background.png');
+  background-size: cover;
+}
+
+h2 {
+  text-align: center;
+}
+
+.assay-container{
+  display: flex;
+  flex-direction: column; /* Align buttons vertically */
+  justify-content: center; /* Center content vertically */
+  align-items: center; /* Center content horizontally */
+  height: 100vh; /* Full viewport height */
+  text-align: center; /* Center the text inside the container */
+}
+
+/* Style for the buttons */
+.assay-container button {
+  margin: 10px; /* Add space between the buttons */
+  width: 400px; /* Set a fixed width for the buttons */
+}
+
+.navbar{
+  margin: 10px;
+}
+
+.navbar-brand{
+     margin-left:50px !important;
+}
