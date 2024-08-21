@@ -1,6 +1,6 @@
 body{
-  /*background: gray;*/
-  background: url('background.png');
+  /* background: gray; */
+  background: url("static/images/background.png");
   background-size: cover;
 }
 
