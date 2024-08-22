@@ -11,25 +11,17 @@
   <body>
     <div class="container" align="left">
       <h1>Clonogenic Analysis(Label-free)</h1>
-      <form class="clono_assay" action="index.html" method="get">
+      <br>
+      <form class="clono_assay" method="post">
 
-        <p>Enter your name: <input type="text" name="username" placeholder="name" required></p>
+        {% csrf_token %}
+        {{ form.name.label_tag }} {{ form.name }} <br><br>
 
-        <label for="num_wells">Number of wells:</label>
-        <select name="num_wells" id="num_wells">
-          <option value="1">1</option>
-          <option value="2">2</option>
-          <option value="3">3</option>
-          <option value="4">4</option>
-        </select>
+        {{ form.num_wells.label }} {{ form.num_wells }} <br><br>
 
-        <p>Choose analysis type: <input type="radio" id="single_day" name="analysis_type" value="single_day">
-        <label for="single_day">Single-day Analysis</label>
-        <input type="radio" id="multi_day" name="analysis_type" value="clonogenic">
-        <label for="multi_day">Clonogenic Analysis</label><br>
-        </p>
+        {{ form.analysis_type.label }} {{ form.analysis_type }} <br><br>
 
-        <h4>Provide path to folder containing well images (.png, .jpeg, .jpg, .tif): </h4>
+        <h4>Provide path to folder containing well images: </h4>
         <table class="image-inputs">
           <thead>
             <tr>
@@ -44,14 +36,12 @@
               <div class="w1">
                 <td>
                     <div class="d-1">
-                      <label for="lf-w1-1" class="upload-button">Label-free Images: </label>
-                      <input id="lf-w1-1" type="file" accept="image/*" webkitdirectory mozdirectory msdirectory odirectory directory multiple disabled>
+                      {{ form.w1_d1_lf.label_tag }} {{ form.w1_d1_lf }}<br>
                     </div>
                 </td>
                 <td>
                   <div class="d-n">
-                    <label for="lf-w1-n" class="upload-button">Label-free Images: </label>
-                    <input id="lf-w1-n" type="file" accept="image/*" webkitdirectory mozdirectory msdirectory odirectory directory multiple disabled>
+                    {{ form.w1_dn_lf.label_tag }} {{ form.w1_dn_lf }}<br>
                   </div>
                 </td>
               </div>
@@ -60,15 +50,13 @@
               <th class="label">Well 2</th>
               <div class="w2">
                 <td>
-                    <div class="d-1">
-                      <label for="lf-w2-1" class="upload-button">Label-free Images: </label>
-                      <input id="lf-w2-1" type="file" accept="image/*" webkitdirectory mozdirectory msdirectory odirectory directory multiple disabled>
-                    </div>
+                  <div class="d-1">
+                    {{ form.w2_d1_lf.label_tag }} {{ form.w2_d1_lf }}<br>
+                  </div>
                 </td>
                 <td>
                   <div class="d-n">
-                    <label for="lf-w2-n" class="upload-button">Label-free Images: </label>
-                    <input id="lf-w2-n" type="file" accept="image/*" webkitdirectory mozdirectory msdirectory odirectory directory multiple disabled>
+                    {{ form.w2_dn_lf.label_tag }} {{ form.w2_dn_lf }}<br>
                   </div>
                 </td>
               </div>
@@ -77,15 +65,13 @@
               <th class="label">Well 3</th>
               <div class="w3">
                 <td>
-                    <div class="d-1">
-                      <label for="lf-w3-1" class="upload-button">Label-free Images: </label>
-                      <input id="lf-w3-1" type="file" accept="image/*" webkitdirectory mozdirectory msdirectory odirectory directory multiple disabled>
-                    </div>
+                  <div class="d-1">
+                    {{ form.w3_d1_lf.label_tag }} {{ form.w3_d1_lf }}<br>
+                  </div>
                 </td>
                 <td>
                   <div class="d-n">
-                    <label for="lf-w3-n" class="upload-button">Label-free Images: </label>
-                    <input id="lf-w3-n" type="file" accept="image/*" webkitdirectory mozdirectory msdirectory odirectory directory multiple disabled>
+                    {{ form.w3_dn_lf.label_tag }} {{ form.w3_dn_lf }}<br>
                   </div>
                 </td>
               </div>
@@ -94,24 +80,22 @@
               <th class="label">Well 4</th>
               <div class="w4">
                 <td>
-                    <div class="d-1">
-                      <label for="lf-w4-1" class="upload-button">Label-free Images: </label>
-                      <input id="lf-w4-1" type="file" accept="image/*" webkitdirectory mozdirectory msdirectory odirectory directory multiple disabled>
-                    </div>
+                  <div class="d-1">
+                    {{ form.w4_d1_lf.label_tag }} {{ form.w4_d1_lf }}<br>
+                  </div>
                 </td>
                 <td>
                   <div class="d-n">
-                    <label for="lf-w4-n" class="upload-button">Label-free Images: </label>
-                    <input id="lf-w4-n" type="file" accept="image/*" webkitdirectory mozdirectory msdirectory odirectory directory multiple disabled>
+                    {{ form.w4_dn_lf.label_tag }} {{ form.w4_dn_lf }}<br>
                   </div>
                 </td>
               </div>
             </tr>
           </tbody>
         </table>
-
-        <p>Save folder as: <input type="text" name="saving_folder" placeholder="folder name"></p>
-        <input type="submit" name="submit" value="Submit">
+        <br>
+        {{ form.saving_folder_name.label_tag }} {{ form.saving_folder_name }}<br><br>
+        <input type="submit" class="btn btn-primary" name="submit" value="Submit">
       </form>
     </div>
   </body>

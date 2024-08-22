@@ -16,11 +16,14 @@
     </a>
   </nav>
   <div class="upload-container">
-      <h2>Upload a label-free Image for cell counting:</h2>
-      <label for="file-upload" class="upload-button">Choose Image</label>
-      <p>Formats accepted: .png, .jpeg, .jpg, .tiff</p>
-      <input id="file-upload" type="file" accept="image/*" class="file-input" onchange="previewImage(event)">
-
+      <div class="container">
+        <h2>Upload a label-free Image for cell counting:</h2>
+        <p>Formats accepted: .png, .jpeg, .jpg, .tiff</p>
+        <form method="post">
+          {{ form.as_p }}
+          {% csrf_token %}
+        </form>
+      </div>
       <div class="preview">
           <img id="image-preview" src="#" alt="Image Preview" style="display:none;">
       </div>
