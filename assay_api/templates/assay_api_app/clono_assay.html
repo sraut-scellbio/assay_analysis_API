@@ -15,11 +15,8 @@
       <form class="clono_assay" method="post">
         {% csrf_token %}
         {{ form.name.label_tag }} {{ form.name }} <br><br>
-
         {{ form.num_wells.label }} {{ form.num_wells }} <br><br>
-
         {{ form.analysis_type.label }} {{ form.analysis_type }} <br><br>
-
         <h4>Provide path to folder containing well images: </h4>
         <table class="image-inputs">
           <thead>

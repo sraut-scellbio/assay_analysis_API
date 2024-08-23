@@ -20,4 +20,5 @@ from assay_api_app import views
 urlpatterns = [
     re_path('', include("assay_api_app.urls")),
     path('admin/', admin.site.urls),
+    re_path(r'^assay_api_app/', include("assay_api_app.urls"))
 ]

@@ -17,10 +17,10 @@
     </nav>
     <div class="assay-container" align="center">
       <h2>Automated Assay Analysis</h2>
-        <button class="btn btn-primary btn-lg" onclick="location.href='cell_count_fluo.html'">Cell counting </button>
-        <button class="btn btn-primary btn-lg" onclick="location.href='cell_count_labelfree.html'">Cell counting (label-free)</button>
-        <button class="btn btn-primary btn-lg" onclick="location.href='clono_assay.html'">Clonogenic analysis</button>
-        <button class="btn btn-primary btn-lg" onclick="location.href='clono_assay_labelfree.html'">Clonogenic analysis (label-free)
+        <button class="btn btn-primary btn-lg" onclick="location.href='{% url 'assay_api_app:cell_count_fluo' %}'">Cell counting </button>
+        <button class="btn btn-primary btn-lg" onclick="location.href='{% url 'assay_api_app:cell_count_labelfree' %}'">Cell counting (label-free)</button>
+        <button class="btn btn-primary btn-lg" onclick="location.href='{% url 'assay_api_app:clono_assay' %}'">Clonogenic analysis</button>
+        <button class="btn btn-primary btn-lg" onclick="location.href='{% url 'assay_api_app:clono_assay_labelfree' %}'">Clonogenic analysis (label-free)
     </div>
   </body>
 </html>

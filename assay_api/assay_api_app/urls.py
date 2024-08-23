@@ -1,6 +1,9 @@
 from django.urls import path, re_path
 from assay_api_app import views
 
+# template tagging
+app_name = 'assay_api_app'
+
 urlpatterns = [
     re_path(r"^$", views.landing, name="scellbio_landing_page"),
     re_path(r"^cell_count_fluo", views.cell_count_fluo, name="cell_count_fluo"),
