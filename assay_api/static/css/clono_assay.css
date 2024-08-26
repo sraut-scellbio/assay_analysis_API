@@ -1,3 +1,4 @@
-td, th {
+.image-inputs {
     padding: 10px 0; /* Adjust the vertical padding to increase space between rows */
+    padding-right: 5px;
   }
