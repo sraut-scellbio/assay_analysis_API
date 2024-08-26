@@ -9,91 +9,98 @@
     <title></title>
   </head>
   <body>
-    <div class="container" align="left">
-      <h1>Clonogenic Analysis(Label-free)</h1>
-      <br>
-      <form class="clono_assay" method="post">
-        {% csrf_token %}
-        {{ form.name.label_tag }} {{ form.name }} <br><br>
-        {{ form.cell_line.label_tag }} {{ form.cell_line }} <br><br>
-        {{ form.num_wells.label }} {{ form.num_wells }} <br><br>
-        {{ form.analysis_type.label }} {{ form.analysis_type }} <br><br>
-        <h4>Provide path to folder containing well images: </h4><br>
-        <table class="image-inputs">
-          <thead>
-            <tr>
-              <th></th>
-              <th class="label">Day 1</th>
-              <th class="label">Day n</th>
-            </tr
-          </thead>
-          <tbody>
-            <tr>
-              <th class="label">Well 1  </th>
-              <div class="w1">
-                <td>
-                    <div class="d-1">
-                      {{ form.w1_d1_lf.label_tag }} {{ form.w1_d1_lf }}<br>
-                    </div>
-                </td>
-                <td>
-                  <div class="d-n">
-                    {{ form.w1_dn_lf.label_tag }} {{ form.w1_dn_lf }}<br>
-                  </div>
-                </td>
-              </div>
-            </tr>
-            <tr>
-              <th class="label">Well 2  </th>
-              <div class="w2">
-                <td>
-                  <div class="d-1">
-                    {{ form.w2_d1_lf.label_tag }} {{ form.w2_d1_lf }}<br>
-                  </div>
-                </td>
-                <td>
-                  <div class="d-n">
-                    {{ form.w2_dn_lf.label_tag }} {{ form.w2_dn_lf }}<br>
-                  </div>
-                </td>
-              </div>
-            </tr>
-            <tr>
-              <th class="label">Well 3  </th>
-              <div class="w3">
-                <td>
-                  <div class="d-1">
-                    {{ form.w3_d1_lf.label_tag }} {{ form.w3_d1_lf }}<br>
-                  </div>
-                </td>
-                <td>
-                  <div class="d-n">
-                    {{ form.w3_dn_lf.label_tag }} {{ form.w3_dn_lf }}<br>
-                  </div>
-                </td>
-              </div>
-            </tr>
-            <tr>
-              <th class="label">Well 4  </th>
-              <div class="w4">
-                <td>
-                  <div class="d-1">
-                    {{ form.w4_d1_lf.label_tag }} {{ form.w4_d1_lf }}<br>
-                  </div>
-                </td>
-                <td>
-                  <div class="d-n">
-                    {{ form.w4_dn_lf.label_tag }} {{ form.w4_dn_lf }}<br>
-                  </div>
-                </td>
-              </div>
-            </tr>
-          </tbody>
-        </table>
+    <nav id="navbar" class="navbar bg-body-tertiary">
+      <a class="navbar-brand" href="https://www.scellbio.com/">
+        <img id='navlogo' src="https://static.wixstatic.com/media/fecc3c_7b3e54e6d97f41e7bd4b5eb90a3f3d76~mv2.png/v1/fill/w_374,h_109,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/fecc3c_7b3e54e6d97f41e7bd4b5eb90a3f3d76~mv2.png" alt="Bootstrap" width="160" height="45">
+      </a>
+    </nav>
+    <div class="upload-container" align="center">
+      <div class="container" align="left">
+        <h1>Clonogenic Analysis(Label-free)</h1>
         <br>
-        {{ form.saving_folder_name.label_tag }} {{ form.saving_folder_name }}<br><br>
-        <input type="submit" class="btn btn-primary" name="submit" value="Submit">
-      </form>
+        <form class="clono_assay" method="post">
+          {% csrf_token %}
+          {{ form.name.label_tag }} {{ form.name }} <br><br>
+          {{ form.cell_line.label_tag }} {{ form.cell_line }} <br><br>
+          {{ form.num_wells.label }} {{ form.num_wells }} <br><br>
+          {{ form.analysis_type.label }} {{ form.analysis_type }} <br><br>
+          <h4>Provide path to folder containing well images: </h4><br>
+          <table class="image-inputs">
+            <thead>
+              <tr>
+                <th></th>
+                <th class="label">Day 1</th>
+                <th class="label">Day n</th>
+              </tr
+            </thead>
+            <tbody>
+              <tr>
+                <th class="label">Well 1  </th>
+                <div class="w1">
+                  <td>
+                      <div class="d-1">
+                        {{ form.w1_d1_lf.label_tag }} {{ form.w1_d1_lf }}<br>
+                      </div>
+                  </td>
+                  <td>
+                    <div class="d-n">
+                      {{ form.w1_dn_lf.label_tag }} {{ form.w1_dn_lf }}<br>
+                    </div>
+                  </td>
+                </div>
+              </tr>
+              <tr>
+                <th class="label">Well 2  </th>
+                <div class="w2">
+                  <td>
+                    <div class="d-1">
+                      {{ form.w2_d1_lf.label_tag }} {{ form.w2_d1_lf }}<br>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="d-n">
+                      {{ form.w2_dn_lf.label_tag }} {{ form.w2_dn_lf }}<br>
+                    </div>
+                  </td>
+                </div>
+              </tr>
+              <tr>
+                <th class="label">Well 3  </th>
+                <div class="w3">
+                  <td>
+                    <div class="d-1">
+                      {{ form.w3_d1_lf.label_tag }} {{ form.w3_d1_lf }}<br>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="d-n">
+                      {{ form.w3_dn_lf.label_tag }} {{ form.w3_dn_lf }}<br>
+                    </div>
+                  </td>
+                </div>
+              </tr>
+              <tr>
+                <th class="label">Well 4  </th>
+                <div class="w4">
+                  <td>
+                    <div class="d-1">
+                      {{ form.w4_d1_lf.label_tag }} {{ form.w4_d1_lf }}<br>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="d-n">
+                      {{ form.w4_dn_lf.label_tag }} {{ form.w4_dn_lf }}<br>
+                    </div>
+                  </td>
+                </div>
+              </tr>
+            </tbody>
+          </table>
+          <br>
+          {{ form.saving_folder_name.label_tag }} {{ form.saving_folder_name }}<br><br>
+          <input type="submit" class="btn btn-primary" name="submit" value="Submit">
+        </form>
+      </div>
     </div>
   </body>
 </html>
