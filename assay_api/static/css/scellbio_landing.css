@@ -31,10 +31,18 @@ h2 {
   width: 400px; /* Set a fixed width for the buttons */
 }
 
+.preview {
+    margin-top: 20px;
+}
+
 .navbar{
   margin: 10px;
 }
 
 .navbar-brand{
   margin-left:50px !important;
+}
+
+.nav-link {
+    margin-right: 15px; /* Adds spacing between navbar items */
 }

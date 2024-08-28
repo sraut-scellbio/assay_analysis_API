@@ -1,4 +1,4 @@
-/* Style for the upload button */
+/* Center the content */
 body {
     /* display: flex;
     justify-content: center;
@@ -11,25 +11,19 @@ body {
     background-size: contain;
 }
 
-
+/* Style for the upload button */
 .upload-container {
     text-align: center;
     justify-content: center;
     align-items: center;
     padding: 20px;
     background-color: #ffffff;
-    margin-top: 50px;
-    margin-left: 50px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    margin-top: 200px;
+    margin-left: 300px;
     margin-right: 300px;
-}
-
-th {
-  padding-right: 10px;
-}
-
-td, tr {
-  height: 40px;
-  border: 1px solid #777;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
 }
 
 .upload-button {
@@ -56,10 +50,19 @@ td, tr {
     margin-top: 20px;
 }
 
+img {
+    max-width: 100%;
+    height: auto;
+}
+
 .navbar{
   margin: 10px;
 }
 
 .navbar-brand{
-     margin-left:50px !important;
+  margin-left:50px !important;
+}
+
+.nav-link {
+    margin-right: 15px; /* Adds spacing between navbar items */
 }
