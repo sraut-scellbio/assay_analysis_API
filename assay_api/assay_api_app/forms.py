@@ -1,106 +1,112 @@
 from django import forms
 from django.core import validators
+from assay_api_app.models import *
 
 def check_for_z(value):
     if value[0].lower == 'z':
         raise forms.ValidationError("Cannot Start with Z.")
 
-class FormCountFluo(forms.Form):
-    name = forms.CharField(max_length=264, label="Enter your name: ")
-    cell_line = forms.CharField(max_length=264, label="Enter cell-line name: ")
-    image = forms.ImageField()
-
-    def clean(self):
-        all_clean_data = super.clean()
-
-
-class FormCountLabelfree(forms.Form):
-    image = forms.ImageField()
-    name = forms.CharField(max_length=264, label="Enter your name ")
-    cell_line = forms.CharField(max_length=264, label="Enter cell-line name ")
-
-    def clean(self):
-        all_clean_data = super.clean()
+class FormCountFluo(forms.ModelForm):
+    class Meta:
+        model = ModelCountFluo
+        fields = ['name', 'cell_line', 'image']
+        labels = {
+            'name': 'Enter your name: ',
+            'cell_line': 'Enter cell-line name: ',
+            'image': 'Upload image: ',
+        }
 
 
-class FormClono(forms.Form):
-    WELL_CHOICES = [
-        (1, "1"),
-        (2, "2"),
-        (3, "3"),
-        (4, "4"),
-    ]
-
-    ANALYSIS_CHOICES = [
-        ("Single Day", "Single Day"),
-        ("Multi Day", "Multi Day")
-    ]
-
-    name = forms.CharField(max_length=264, label="Enter your name ",              validators=[check_for_z])
-    cell_line = forms.CharField(max_length=264, label="Enter cell-line name ")
-    num_wells = forms.ChoiceField(label="Choose number of wells: ", choices=WELL_CHOICES)
-    analysis_type = forms.ChoiceField(label="Choose analysis type: ", choices=ANALYSIS_CHOICES)
-
-    # folder upload fields
-    w1_d1_lf = forms.FileField(label="Label-free Images ", disabled=False)
-    w1_d1_fluo = forms.FileField(label="Fluorescent Images ", disabled=False)
-
-    w2_d1_lf = forms.FileField(label="Label-free Images ", disabled=True)
-    w2_d1_fluo = forms.FileField(label="Fluorescent Images ", disabled=True)
-
-    w3_d1_lf = forms.FileField(label="Label-free Images ", disabled=True)
-    w3_d1_fluo = forms.FileField(label="Fluorescent Images ", disabled=True)
-
-    w4_d1_lf = forms.FileField(label="Label-free Images ", disabled=True)
-    w4_d1_fluo = forms.FileField(label="Fluorescent Images ", disabled=True)
-
-    w1_dn_lf = forms.FileField(label="Label-free Images ", disabled=True)
-    w1_dn_fluo = forms.FileField(label="Fluorescent Images ", disabled=True)
-
-    w2_dn_lf = forms.FileField(label="Label-free Images ", disabled=True)
-    w2_dn_fluo = forms.FileField(label="Fluorescent Images ", disabled=True)
-
-    w3_dn_lf = forms.FileField(label="Label-free Images ", disabled=True)
-    w3_dn_fluo = forms.FileField(label="Fluorescent Images ", disabled=True)
-
-    w4_dn_lf = forms.FileField(label="Label-free Images ", disabled=True)
-    w4_dn_fluo = forms.FileField(label="Fluorescent Images ", disabled=True)
-
-    saving_folder_name = forms.CharField(max_length=264, label="Save folder as: ")
-
-    def clean(self):
-        all_clean_data = super.clean()
+class FormCountLabelFree(forms.ModelForm):
+    class Meta:
+        model = ModelCountLabelFree
+        fields = ['name', 'cell_line', 'image']
+        labels = {
+            'name': 'Enter your name: ',
+            'cell_line': 'Enter cell-line name: ',
+            'image': 'Upload image: ',
+        }
 
 
-class FormClonoLabelfree(forms.Form):
-    WELL_CHOICES = [
-        (1, "1"),
-        (2, "2"),
-        (3, "3"),
-        (4, "4"),
-    ]
+class FormClono(forms.ModelForm):
+    class Meta:
+        model = ModelClono
+        fields = [
+            'name',
+            'cell_line',
+            'num_wells',
+            'analysis_type',
+            'w1_d1_lf',
+            'w1_d1_fluo',
+            'w2_d1_lf',
+            'w2_d1_fluo',
+            'w3_d1_lf',
+            'w3_d1_fluo',
+            'w4_d1_lf',
+            'w4_d1_fluo',
+            'w1_dn_lf',
+            'w1_dn_fluo',
+            'w2_dn_lf',
+            'w2_dn_fluo',
+            'w3_dn_lf',
+            'w3_dn_fluo',
+            'w4_dn_lf',
+            'w4_dn_fluo'
+        ]
 
-    ANALYSIS_CHOICES = [
-        ("Single Day", "Single Day"),
-        ("Multi Day", "Multi Day")
-    ]
+        labels = {
+            'name': 'Enter your name',
+            'cell_line': 'Enter cell-line name',
+            'num_wells': 'Choose number of wells',
+            'analysis_type': 'Choose analysis type',
+            'w1_d1_lf': 'Label-free Images',
+            'w1_d1_fluo': 'Fluorescent Images',
+            'w2_d1_lf': 'Label-free Images',
+            'w2_d1_fluo': 'Fluorescent Images',
+            'w3_d1_lf': 'Label-free Images',
+            'w3_d1_fluo': 'Fluorescent Images',
+            'w4_d1_lf': 'Label-free Images',
+            'w4_d1_fluo': 'Fluorescent Images',
+            'w1_dn_lf': 'Label-free Images',
+            'w1_dn_fluo': 'Fluorescent Images',
+            'w2_dn_lf': 'Label-free Images',
+            'w2_dn_fluo': 'Fluorescent Images',
+            'w3_dn_lf': 'Label-free Images',
+            'w3_dn_fluo': 'Fluorescent Images',
+            'w4_dn_lf': 'Label-free Images',
+            'w4_dn_fluo': 'Fluorescent Images'
+        }
 
-    name = forms.CharField(max_length=264, label="Enter your name ")
-    cell_line = forms.CharField(max_length=264, label="Enter cell-line name ")
-    num_wells = forms.ChoiceField(label="Choose number of wells: ", choices=WELL_CHOICES)
-    analysis_type = forms.ChoiceField(label="Choose analysis type: ", choices=ANALYSIS_CHOICES)
 
-    # folder upload fields
-    w1_d1_lf = forms.FileField(label="Label-free Images ", disabled=False)
-    w2_d1_lf = forms.FileField(label="Label-free Images ", disabled=True)
-    w3_d1_lf = forms.FileField(label="Label-free Images ", disabled=True)
-    w4_d1_lf = forms.FileField(label="Label-free Images ", disabled=True)
-    w1_dn_lf = forms.FileField(label="Label-free Images ", disabled=True)
-    w2_dn_lf = forms.FileField(label="Label-free Images ", disabled=True)
-    w3_dn_lf = forms.FileField(label="Label-free Images ", disabled=True)
-    w4_dn_lf = forms.FileField(label="Label-free Images ", disabled=True)
+class FormClonoLabelFree(forms.ModelForm):
+    class Meta:
+        model = ModelClonoLabelFree
+        fields = [
+            'name',
+            'cell_line',
+            'num_wells',
+            'analysis_type',
+            'w1_d1_lf',
+            'w2_d1_lf',
+            'w3_d1_lf',
+            'w4_d1_lf',
+            'w1_dn_lf',
+            'w2_dn_lf',
+            'w3_dn_lf',
+            'w4_dn_lf'
+        ]
 
-    saving_folder_name = forms.CharField(max_length=264, label="Save folder as: ")
-
-    def clean(self):
-        all_clean_data = super.clean()
+        labels = {
+            'name': 'Enter your name',
+            'cell_line': 'Enter cell-line name',
+            'num_wells': 'Choose number of wells',
+            'analysis_type': 'Choose analysis type',
+            'w1_d1_lf': 'Label-free Images',
+            'w2_d1_lf': 'Label-free Images',
+            'w3_d1_lf': 'Label-free Images',
+            'w4_d1_lf': 'Label-free Images',
+            'w1_dn_lf': 'Label-free Images',
+            'w2_dn_lf': 'Label-free Images',
+            'w3_dn_lf': 'Label-free Images',
+            'w4_dn_lf': 'Label-free Images'
+        }
