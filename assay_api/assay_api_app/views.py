@@ -41,6 +41,12 @@ def clono_assay(request):
         form = forms.FormClono(request.POST, request.FILES)
 
         if form.is_valid():
+            name = form.cleaned_data['name']
+            cell_line = form.cleaned_data['cell_line']
+            num_wells = form.cleaned_data['num_wells']
+            analysis_type = form.cleaned_data['analysis_type']
+            saving_folder_name = form.cleaned_data['saving_folder_name']
+
             w1_d1_lf_folder = form.cleaned_data['w1_d1_lf']
             w1_d1_fluo_folder = form.cleaned_data['w1_d1_fluo']
             w2_d1_lf_folder = form.cleaned_data['w2_d1_lf']
@@ -59,6 +65,13 @@ def clono_assay(request):
             w4_dn_lf_folder = form.cleaned_data['w4_dn_lf']
             w4_dn_fluo_folder = form.cleaned_data['w4_dn_fluo']
 
+            # save FILES
+
+            # call python program for analysis
+            # it should take the downloaded file paths as input
+            # write the results as outputs to a location as a .zip file
+            # take the user to a page that allows them to download the results
+             
     return render(request, "assay_api_app/clono_assay.html", { 'form': form })
 
 def clono_assay_labelfree(request):

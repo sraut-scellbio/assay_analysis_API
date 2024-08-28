@@ -7,19 +7,6 @@ body {
     margin: 0;
     font-family: Arial, sans-serif; */
     background-color: #f4f4f4;
-    background: url('');
-    background-size: contain;
-}
-
-.upload-container {
-    text-align: center;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
-    background-color: #ffffff;
-    margin-top: 50px;
-    margin-left: 50px;
-    margin-right: 300px;
 }
 
 th {
