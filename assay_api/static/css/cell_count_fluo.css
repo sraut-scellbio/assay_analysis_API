@@ -66,3 +66,8 @@ img {
 .nav-link {
     margin-right: 15px; /* Adds spacing between navbar items */
 }
+
+.res-img {
+    width: 100px;
+    height: 100px;
+}

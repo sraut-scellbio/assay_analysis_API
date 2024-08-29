@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+{% extends "assay_api_app/base.html" %}
+  {% load static %}
+  {% block custom_functions %}
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/cell_count_fluo.css' %}">
+    <title>success</title>
+  {% endblock %}
+  {% block body_block %}
+    <h3>Results</h3>
+    <p>Number of cells: {{ num_cells }}</p><br>
+    <img class="res-img" src="{% static 'images/' %}{{ img_clr_name }}" alt="Cell Count Contours" style="width: 800px; height: auto;">
+  {% endblock %}
