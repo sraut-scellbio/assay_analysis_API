@@ -2,18 +2,14 @@ from django import forms
 from django.core import validators
 from assay_api_app.models import *
 
-def check_for_z(value):
-    if value[0].lower == 'z':
-        raise forms.ValidationError("Cannot Start with Z.")
-
 class FormCountFluo(forms.ModelForm):
     class Meta:
         model = ModelCountFluo
         fields = ['name', 'cell_line', 'image']
         labels = {
-            'name': 'Enter your name: ',
-            'cell_line': 'Enter cell-line name: ',
-            'image': 'Upload image: ',
+            'name': 'Enter your name ',
+            'cell_line': 'Enter cell-line name ',
+            'image': 'Upload image ',
         }
 
 
@@ -22,9 +18,9 @@ class FormCountLabelFree(forms.ModelForm):
         model = ModelCountLabelFree
         fields = ['name', 'cell_line', 'image']
         labels = {
-            'name': 'Enter your name: ',
-            'cell_line': 'Enter cell-line name: ',
-            'image': 'Upload image: ',
+            'name': 'Enter your name ',
+            'cell_line': 'Enter cell-line name ',
+            'image': 'Upload image ',
         }
 
 

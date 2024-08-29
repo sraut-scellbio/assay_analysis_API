@@ -11,10 +11,11 @@
   {% block body_block %}
     <div class="upload-container">
       <h2>Upload a label-free Image for cell counting:</h2>
-      <p>Formats accepted: .png, .jpeg, .jpg, .tiff</p>
-      <form method="post">
+      <p>Formats accepted: .png, .jpeg, .jpg, .tif</p>
+      <form method="post" enctype="multipart/form-data">
         {{ form.as_p }}
         {% csrf_token %}
+        <input type="submit" class="btn btn-primary" name="submit" value="Submit">
       </form>
     </div>
     <div class="preview">

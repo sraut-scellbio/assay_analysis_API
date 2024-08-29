@@ -12,7 +12,7 @@
     <div class="container" align="left">
       <h1>Clonogenic Analysis(Label-free)</h1>
       <br>
-      <form class="clono_assay" method="post">
+      <form class="clono_assay" method="post" enctype="multipart/form-data">
         {% csrf_token %}
         {{ form.name.label_tag }} {{ form.name }} <br><br>
         {{ form.cell_line.label_tag }} {{ form.cell_line }} <br><br>
