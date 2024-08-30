@@ -1,7 +1,9 @@
 import pdb
 import cv2
+import torch
 import numpy as np
 import matplotlib.pyplot as plt
+from cellpose import models
 from .utils import *
 from .settings import avg_well_area, cell_area_range, well_dist_thresh
 from .preprocess import conv_to_8bit, preprocess_dic_mask, \
@@ -70,6 +72,49 @@ def count_cells_fluo(img_8bit):
         # this helps eliminate objects/noise with non-circular shape
         (_, _), radius = cv2.minEnclosingCircle(cnt)
         circ_area = np.pi*(radius**2)
+        circ_areas.append(circ_area)
+
+        # if external contour and reasonable area
+        if (cell_area_range[0] < circ_area < cell_area_range[1]) and (hier[3] == -1):
+            ((x, y), r) = cv2.minEnclosingCircle(cnt)
+            x, y = int(x), int(y)
+            filt_locs.append((x, y, r))
+            filt_contours.append(cnt)
+            filt_areas.append(cnt_area)
+
+    repeated_idxs = perform_nonmax_suppression(filt_locs, cells=True)
+    for i, idx in enumerate(repeated_idxs):
+        filt_locs.pop(idx - i)
+        filt_contours.pop(idx - i)
+        filt_areas.pop(idx - i)
+
+    return len(filt_locs), filt_locs, filt_contours
+
+def count_cells_labelfree(img_8bit):
+    circ_areas = []
+    cnt_areas = []
+    filt_areas = []
+    filt_locs = []
+    filt_contours = []
+
+    model = models.Cellpose(gpu=torch.cuda.is_available(), model_type='cyto3')
+    bin_mask = model.eval(img_8bit, diameter=20, channels=[0, 0], do_3D=False)[0]
+    bin_mask = custom_threshold(bin_mask, 5, 255)
+    bin_mask = preprocess_dic_mask(bin_mask, img_8bit.shape)
+
+    # contours
+    contours, hierarchy = get_cell_contours(bin_mask, perform_watershed=True)
+
+    for i, cnt in enumerate(contours):
+        hier = hierarchy[0, i, :]
+
+        cnt_area = cv2.contourArea(cnt)
+        cnt_areas.append(cnt_area)
+
+        # fit a circle and filter based on the area of the circle not the contour
+        # this helps eliminate objects/noise with non-circular shape
+        (_, _), radius = cv2.minEnclosingCircle(cnt)
+        circ_area = np.pi * (radius ** 2)
         circ_areas.append(circ_area)
 
         # if external contour and reasonable area

@@ -64,11 +64,10 @@ def preprocess_dic_stack(dic_stack):
 def preprocess_dic_mask(dic_mask, resize_dims):
     dic_mask[dic_mask > 0] = 255
     img_resized = cv2.resize(dic_mask, (resize_dims[1], resize_dims[0]), cv2.INTER_CUBIC)
-    img_th = custom_threshold(img_resized, 5, 255)
     kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (3, 3))
-    img_close = cv2.morphologyEx(img_th, cv2.MORPH_CLOSE, kernel, iterations=2)
-    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (7, 7))
-    img_open = cv2.morphologyEx(img_close, cv2.MORPH_OPEN, kernel, iterations=4)
+    img_close = cv2.morphologyEx(img_resized, cv2.MORPH_CLOSE, kernel, iterations=1)
+    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
+    img_open = cv2.morphologyEx(img_close, cv2.MORPH_OPEN, kernel, iterations=1)
     return img_open
 
 def preprocess_flo_stack(flo_stack):
@@ -81,6 +80,3 @@ def preprocess_flo_mask(flo_mask):
     # kernel_close = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5))
     # img_close = cv2.morphologyEx(img_open, cv2.MORPH_CLOSE, kernel_close, iterations=2)
     return img_open
-
-
-

@@ -66,3 +66,13 @@ img {
 .nav-link {
     margin-right: 15px; /* Adds spacing between navbar items */
 }
+
+#loading-spinner {
+  text-align: center;
+  margin-top: 20px;
+}
+
+#loading-spinner img {
+  width: 50px; /* Adjust size as needed */
+  height: 50px;
+}

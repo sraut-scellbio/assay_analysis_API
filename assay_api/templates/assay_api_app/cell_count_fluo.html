@@ -4,7 +4,6 @@
   {% block custom_functions %}
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <link rel="stylesheet" href="{% static 'css/cell_count_fluo.css' %}">
-      <script src="{% static 'scr/cell_count_fluo.js' %}"></script>
       <title>Image Upload</title>
   {% endblock %}
 
@@ -12,13 +11,37 @@
     <div class="upload-container" align="left">
       <h2>Upload a fluorescent Image for cell counting:</h2>
       <p>Formats accepted: .png, .jpeg, .jpg, .tif</p>
-        <form method="post" enctype="multipart/form-data">
+        <form id="image-upload-form" method="post" enctype="multipart/form-data">
           {{ form.as_p }}
           {% csrf_token %}
-          <input type="submit" class="btn btn-primary" name="submit" value="Submit">
+          <input id="submit-btn" type="submit" class="btn btn-primary" name="submit" value="Submit">
         </form>
-      <div class="preview">
-          <img id="image-preview" src="#" alt="Image Preview" style="display:none;">
-      </div>
     </div>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        const imageInput = document.getElementById('id_image');
+        const submitButton = document.getElementById('submit-btn');
+
+        // Disable the submit button initially
+        submitButton.disabled = true;
+
+        // Enable the submit button when an image is selected
+        imageInput.addEventListener('change', function() {
+            if (this.files.length > 0) {
+                submitButton.disabled = false;
+            }
+        });
+
+        // Add an event listener to the form, not the button, to handle submission
+        const form = document.getElementById('image-upload-form');
+
+        form.addEventListener('submit', function(event) {
+            // Disable the button to prevent multiple submissions
+            submitButton.disabled = true;
+
+            // Optionally, change the button text to indicate the action
+            submitButton.value = "Submitting...";
+        });
+      });
+    </script>
   {% endblock %}
