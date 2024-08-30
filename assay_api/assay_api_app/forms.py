@@ -5,10 +5,11 @@ from assay_api_app.models import *
 class FormCountFluo(forms.ModelForm):
     class Meta:
         model = ModelCountFluo
-        fields = ['name', 'cell_line', 'image']
+        fields = ['name', 'cell_line', 'magnification', 'image']
         labels = {
             'name': 'Enter your name ',
             'cell_line': 'Enter cell-line name ',
+            'magnification': 'Manification',
             'image': 'Upload image ',
         }
 
@@ -16,10 +17,11 @@ class FormCountFluo(forms.ModelForm):
 class FormCountLabelFree(forms.ModelForm):
     class Meta:
         model = ModelCountLabelFree
-        fields = ['name', 'cell_line', 'image']
+        fields = ['name', 'cell_line', 'magnification', 'image']
         labels = {
             'name': 'Enter your name ',
             'cell_line': 'Enter cell-line name ',
+            'magnification': 'Manification',
             'image': 'Upload image ',
         }
 

@@ -98,6 +98,25 @@ def cell_count_labelfree(request):
 
 
 def clono_assay(request):
+    file_fields = [
+        'w1_d1_lf',
+        'w1_d1_fluo',
+        'w2_d1_lf',
+        'w2_d1_fluo',
+        'w3_d1_lf',
+        'w3_d1_fluo',
+        'w4_d1_lf',
+        'w4_d1_fluo',
+        'w1_dn_lf',
+        'w1_dn_fluo',
+        'w2_dn_lf',
+        'w2_dn_fluo',
+        'w3_dn_lf',
+        'w3_dn_fluo',
+        'w4_dn_lf',
+        'w4_dn_fluo'
+    ]
+
     if request.method == "POST":
         form = forms.FormClono(request.POST, request.FILES)
 

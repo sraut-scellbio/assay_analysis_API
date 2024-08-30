@@ -18,6 +18,7 @@ class ModelCountFluo(models.Model):
 
     name = models.CharField(max_length=264)
     cell_line = models.CharField(max_length=264)
+    magnification = models.CharField(max_length=20, default="10x")
     image = models.ImageField(upload_to='downloads/count_fluo')
     def __str__(self):
         return self.name
@@ -25,6 +26,7 @@ class ModelCountFluo(models.Model):
 class ModelCountLabelFree(models.Model):
     name = models.CharField(max_length=264)
     cell_line = models.CharField(max_length=264)
+    magnification = models.CharField(max_length=20, default="10x")
     image = models.ImageField(upload_to='downloads/count_labelfree')
     def __str__(self):
         return self.name

@@ -4,7 +4,6 @@
   {% block custom_functions %}
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="{% static 'css/clono_assay.css' %}">
-    <script src="{% static 'scr/clono_assay.js' %}"></script>
     <title>File Upload</title>
   {% endblock %}
 
@@ -98,7 +97,8 @@
             </tr>
           </tbody>
         </table>
-        <input type="submit" class="btn btn-primary" name="submit" value="Submit">
+        <input id="submit-btn" type="submit" class="btn btn-primary" name="submit" value="Submit">
       </form>
     </div>
+    <script src="{% static 'scr/clono_assay.js' %}"></script>
   {% endblock %}

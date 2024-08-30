@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
   // Get all radio buttons with name 'option'
-  var analysisType = document.getElementById('id_analysis_type');
-  var nwellsDn = document.getElementById('id_num_wells');
+  const analysisType = document.getElementById('id_analysis_type');
+  const nwellsDn = document.getElementById('id_num_wells');
 
   // when the number of wells is toggled
   nwellsDn.addEventListener('change', function() {
