@@ -139,7 +139,7 @@ def get_clonogenic_assay_summary(data_path, well1_name, well2_name):
     return data_well1, data_well2, data_clonogenic, swarm_data_w1, swarm_data_w2
 
 
-if __name__ == '__main__':
+def multiday_analysis(path_lf_d1, path_fluo_d1, path_lf_dn, path_fluo_dn):
     file_name = 'mGBM_50um_day7_TMZ_IR_IMPDH2_Device1.lif'
     root_dir = 'C:\\Users\\ShiskaRaut\\Desktop\\Projects'
     data_path = os.path.join(root_dir, 'Data', file_name)
@@ -164,3 +164,6 @@ if __name__ == '__main__':
     save_swarm_data(swarm_data_w1, out_dir, well1_name)
     save_swarm_data(swarm_data_w2, out_dir, well2_name)
 
+
+def singleday_analysis(path_lf, path_fluo):
+    pass

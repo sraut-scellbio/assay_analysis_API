@@ -12,7 +12,7 @@
     <div class="container" align="left">
       <h1>Clonogenic Analysis(Label-free)</h1>
       <br>
-      <form class="clono_assay" method="post" enctype="multipart/form-data">
+      <form id="files-upload-form" class="clono_assay" method="post" enctype="multipart/form-data">
         {% csrf_token %}
         {{ form.name.label_tag }} {{ form.name }} <br><br>
         {{ form.cell_line.label_tag }} {{ form.cell_line }} <br><br>
@@ -90,8 +90,35 @@
             </tr>
           </tbody>
         </table>
-        <input type="submit" class="btn btn-primary" name="submit" value="Submit">
-        <br><br>
+        <br>
+        <input id="submit-btn" type="submit" class="btn btn-primary" name="submit" value="Submit">
       </form>
     </div>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        const fileInput = document.getElementById('id_w1_d1_lf');
+        const submitButton = document.getElementById('submit-btn');
+
+        // Disable the submit button initially
+        submitButton.disabled = true;
+
+        // Enable the submit button when an image is selected
+        fileInput.addEventListener('change', function() {
+            if (this.files.length > 0) {
+                submitButton.disabled = false;
+            }
+        });
+
+        // Add an event listener to the form, not the button, to handle submission
+        const form = document.getElementById('files-upload-form');
+
+        form.addEventListener('submit', function(event) {
+            // Disable the button to prevent multiple submissions
+            submitButton.disabled = true;
+
+            // Optionally, change the button text to indicate the action
+            submitButton.value = "Submitting...";
+        });
+      });
+    </script>
   {% endblock %}

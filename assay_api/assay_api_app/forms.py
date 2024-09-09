@@ -9,7 +9,7 @@ class FormCountFluo(forms.ModelForm):
         labels = {
             'name': 'Enter your name ',
             'cell_line': 'Enter cell-line name ',
-            'magnification': 'Manification',
+            'magnification': 'Magnification',
             'image': 'Upload image ',
         }
 
@@ -21,7 +21,7 @@ class FormCountLabelFree(forms.ModelForm):
         labels = {
             'name': 'Enter your name ',
             'cell_line': 'Enter cell-line name ',
-            'magnification': 'Manification',
+            'magnification': 'Magnification',
             'image': 'Upload image ',
         }
 

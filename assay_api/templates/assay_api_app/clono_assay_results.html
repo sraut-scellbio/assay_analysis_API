@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+{% extends "assay_api_app/base.html" %}
+  {% load static %}
+  {% block custom_functions %}
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/cell_count_fluo.css' %}">
+    <title>success</title>
+  {% endblock %}
+  {% block body_block %}
+    {% if results_zipfile %}
+        <a id="download-link" href="{{ results_zipfile }}" download>Download Results</a>
+    {% else %}
+        <p>No results available for download.</p>
+    {% endif %}
+  {% endblock %}
