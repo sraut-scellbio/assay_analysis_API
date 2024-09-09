@@ -2,3 +2,5 @@ downloads/
 *.pyc
 images/
 media/
+.idea/
+*.xml
