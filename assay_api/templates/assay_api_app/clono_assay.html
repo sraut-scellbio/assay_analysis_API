@@ -111,20 +111,20 @@
 
         // Enable the submit button when an image is selected
         fileInput.addEventListener('change', function() {
-            if (this.files.length > 0) {
-                submitButton.disabled = false;
-            }
+          if (this.files.length > 0) {
+              submitButton.disabled = false;
+          }
         });
 
         // Add an event listener to the form, not the button, to handle submission
         const form = document.getElementById('files-upload-form');
-
         form.addEventListener('submit', function(event) {
-            // Disable the button to prevent multiple submissions
-            submitButton.disabled = true;
 
-            // Optionally, change the button text to indicate the action
-            submitButton.value = "Submitting...";
+          // Disable the button to prevent multiple submissions
+          submitButton.disabled = true;
+
+          // Optionally, change the button text to indicate the action
+          submitButton.value = "Submitting...";
         });
       });
     </script>

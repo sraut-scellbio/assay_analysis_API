@@ -1,5 +1,6 @@
 import os
 import cv2
+import glob
 import random
 import string
 import zipfile
@@ -169,6 +170,8 @@ def clono_assay(request):
             analysis_type = form.cleaned_data.get('analysis_type')
             num_wells = int(form.cleaned_data.get('num_wells'))
 
+            f_uid = generate_unique_id()
+            user_uid = f"{uname}_{cell_line}_{f_uid}"
             # save labelfree and fluorescent paths as tuple values
             for i in range(0, len(file_fields), 2):
                 if (form.cleaned_data.get(file_fields[i])) is not None and (form.cleaned_data.get(file_fields[i+1]) is not None):
@@ -177,9 +180,8 @@ def clono_assay(request):
                     folder_path_lf = os.path.join(settings.MEDIA_ROOT, 'clono_analysis', fname_lf)
                     folder_path_fluo = os.path.join(settings.MEDIA_ROOT, 'clono_analysis', fname_fluo)
 
-                    # unzip the FILES
-                    folder_path_lf_exto = os.path.join(settings.MEDIA_ROOT, 'clono_analysis', file_fields[i])
-                    folder_path_fluo_exto = os.path.join(settings.MEDIA_ROOT, 'clono_analysis', file_fields[i+1])
+                    folder_path_lf_exto = os.path.join(settings.MEDIA_ROOT, 'clono_analysis', user_uid, file_fields[i])
+                    folder_path_fluo_exto = os.path.join(settings.MEDIA_ROOT, 'clono_analysis', user_uid, file_fields[i+1])
                     os.makedirs(folder_path_lf_exto, exist_ok=True)
                     os.makedirs(folder_path_fluo_exto, exist_ok=True)
 
@@ -201,20 +203,27 @@ def clono_assay(request):
                         dn_fluo = os.path.join(folder_path_fluo_exto, fname_fluo.split('.')[0])
                         image_folders_dn[tokens[0]] = (dn_lf, dn_fluo)
 
+            # remove zip files
+            zip_files = glob.glob(os.path.join(settings.MEDIA_ROOT, 'clono_analysis', '*.zip'))
+            for zip_file in zip_files:
+                try:
+                    os.remove(zip_file)
+                    print(f"Removed file: {zip_file}")
+                except Exception as e:
+                    print(f"Error removing file {zip_file}: {e}")
+                    
             # create root results folder
-            f_uid = generate_unique_id()
-            results_fld_name = f"results_{uname}_{cell_line}_{f_uid}"
+            results_fld_name = f"results_{user_uid}"
             root_results_path = os.path.join(settings.MEDIA_ROOT, 'clono_analysis', results_fld_name)
             os.makedirs(root_results_path, exist_ok=True)
             # check if the items uploaded correspond to the analysis model_type
-            if analysis_type == 'Single Day':
-                if len(image_folders_d1.keys()) == num_wells:
-                    for well_id, (path_lf, path_fluo) in image_folders_d1.items():
-                        # create results folder
-                        well_fld_path = os.path.join(root_results_path, well_id)
-                        os.makedirs(well_fld_path)
-                        # res_dict, swarm_data_dict = singleday_analysis(path_lf, path_fluo)
-                        # save_results(res_dict, swarm_data_dict, well_fld_path)
+            if (analysis_type == 'Single Day') and (len(image_folders_d1.values()) > 0):
+                for well_id, (path_lf, path_fluo) in image_folders_d1.items():
+                    # create results folder
+                    well_fld_path = os.path.join(root_results_path, well_id)
+                    os.makedirs(well_fld_path)
+                    # res_dict, swarm_data_dict = singleday_analysis(path_lf, path_fluo)
+                    # save_results(res_dict, swarm_data_dict, well_fld_path)
 
                     zip_fname = f"{results_fld_name}.zip"
                     zip_file_path = os.path.join(settings.MEDIA_ROOT, 'clono_analysis', zip_fname)
@@ -225,15 +234,19 @@ def clono_assay(request):
                                 # Add file to zip file with relative path
                                 zip_file.write(file_path, os.path.relpath(file_path, root_results_path))
 
-            elif analysis_type == 'Multi Day':
-                if len(image_folders_d1.keys()) == len(image_folders_dn.keys()) == num_wells:
-                    for well_id in image_folders_d1.keys():
-                        well_fld_path = os.path.join(root_results_path, well_id)
-                        os.makedirs(well_fld_path)
-                        path_lf_d1, path_fluo_d1 = image_folders_d1[well_id]
-                        path_lf_dn, path_fluo_dn = image_folders_dn[well_id]
-                        # res_dict, swarm_data_dict = multiday_analysis(path_lf_d1, path_fluo_d1, path_lf_dn, path_fluo_dn)
-                        # save_results(res_dict, swarm_data_dict, well_fld_path)
+                return render(request, "assay_api_app/clono_assay_results.html", {
+                'results_zipfile': f'{settings.MEDIA_URL}clono_analysis/{zip_fname}',
+                })
+
+
+            elif (analysis_type == 'Multi Day') and (set(image_folders_d1.keys()) == set(image_folders_dn.keys())) and (len(image_folders_d1.values()) > 0):
+                for well_id in image_folders_d1.keys():
+                    well_fld_path = os.path.join(root_results_path, well_id)
+                    os.makedirs(well_fld_path)
+                    path_lf_d1, path_fluo_d1 = image_folders_d1[well_id]
+                    path_lf_dn, path_fluo_dn = image_folders_dn[well_id]
+                    # res_dict, swarm_data_dict = multiday_analysis(path_lf_d1, path_fluo_d1, path_lf_dn, path_fluo_dn)
+                    # save_results(res_dict, swarm_data_dict, well_fld_path)
 
                     zip_fname = f"{results_fld_name}.zip"
                     zip_file_path = os.path.join(settings.MEDIA_ROOT, 'clono_analysis', zip_fname)
@@ -244,9 +257,12 @@ def clono_assay(request):
                                 # Add file to zip file with relative path
                                 zip_file.write(file_path, os.path.relpath(file_path, root_results_path))
 
+                return render(request, "assay_api_app/clono_assay_results.html", {
+                'results_zipfile': f'{settings.MEDIA_URL}clono_analysis/{zip_fname}',
+                })
 
             return render(request, "assay_api_app/clono_assay_results.html", {
-            'results_zipfile': f'{settings.MEDIA_URL}clono_analysis/{zip_fname}',
+            'results_zipfile': None,
             })
 
         else:
