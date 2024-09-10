@@ -4,3 +4,4 @@ images/
 media/
 .idea/
 *.xml
+*.sqlite3
