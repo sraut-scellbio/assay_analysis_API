@@ -20,9 +20,6 @@ from assay_api_app.cell_count_fluo_src.analyze_cell_data import count_cells_fluo
 def landing(request):
     return render(request, "assay_api_app/scellbio_landing_page.html")
 
-def upload_success(request):
-    return render(request, "assay_api_app/upload_success.html")
-
 
 def generate_unique_id(length=8):
     # Define the characters to use in the identifier
@@ -83,7 +80,7 @@ def cell_count_fluo(request):
                 # Provide the path as a reference in the template
                 # img_clr_url = os.path.join(settings.STATIC_URL, 'images', img_clr_name)
 
-                return render(request, "assay_api_app/cell_count_fluo_results.html", {
+                return render(request, "assay_api_app/count_fluo/cell_count_fluo_results.html", {
                     'num_cells': num_cells,
                     'img_clr_name': img_clr_name
                 })
@@ -92,7 +89,7 @@ def cell_count_fluo(request):
             print(form.errors)
     else:
         form = forms.FormCountFluo()
-    return render(request, "assay_api_app/cell_count_fluo.html", {'form': form })
+    return render(request, "assay_api_app/count_fluo/cell_count_fluo.html", {'form': form })
 
 
 def cell_count_labelfree(request):
@@ -124,7 +121,7 @@ def cell_count_labelfree(request):
                 # Provide the path as a reference in the template
                 # img_clr_url = os.path.join(settings.STATIC_URL, 'images', img_clr_name)
 
-                return render(request, "assay_api_app/cell_count_labelfree_results.html", {
+                return render(request, "assay_api_app/count_labelfree/cell_count_labelfree_results.html", {
                     'num_cells': num_cells,
                     'img_clr_name': img_clr_name
                 })
@@ -133,7 +130,7 @@ def cell_count_labelfree(request):
             print(form.errors)
     else:
         form = forms.FormCountLabelFree()
-    return render(request, "assay_api_app/cell_count_labelfree.html", {'form': form })
+    return render(request, "assay_api_app/count_labelfree/cell_count_labelfree.html", {'form': form })
 
 
 def clono_assay(request):
@@ -234,7 +231,7 @@ def clono_assay(request):
                                 # Add file to zip file with relative path
                                 zip_file.write(file_path, os.path.relpath(file_path, root_results_path))
 
-                return render(request, "assay_api_app/clono_assay_results.html", {
+                return render(request, "assay_api_app/clono_assay/clono_assay_results.html", {
                 'results_zipfile': f'{settings.MEDIA_URL}clono_analysis/{zip_fname}',
                 })
 
@@ -257,11 +254,11 @@ def clono_assay(request):
                                 # Add file to zip file with relative path
                                 zip_file.write(file_path, os.path.relpath(file_path, root_results_path))
 
-                return render(request, "assay_api_app/clono_assay_results.html", {
+                return render(request, "assay_api_app/clono_assay/clono_assay_results.html", {
                 'results_zipfile': f'{settings.MEDIA_URL}clono_analysis/{zip_fname}',
                 })
 
-            return render(request, "assay_api_app/clono_assay_results.html", {
+            return render(request, "assay_api_app/clono_assay/clono_assay_results.html", {
             'results_zipfile': None,
             })
 
@@ -270,7 +267,7 @@ def clono_assay(request):
             print(form.errors)
     else:
         form = forms.FormClono()
-    return render(request, "assay_api_app/clono_assay.html", { 'form': form })
+    return render(request, "assay_api_app/clono_assay/clono_assay.html", { 'form': form })
 
 
 def clono_assay_labelfree(request):
@@ -342,7 +339,7 @@ def clono_assay_labelfree(request):
                                 # Add file to zip file with relative path
                                 zip_file.write(file_path, os.path.relpath(file_path, root_results_path))
 
-                return render(request, "assay_api_app/clono_assay_results.html", {
+                return render(request, "assay_api_app/clono_assay_labelfree/clono_assay_results.html", {
                 'results_zipfile': f'{settings.MEDIA_URL}clono_analysis_labelfree/{zip_fname}',
                 })
 
@@ -365,11 +362,11 @@ def clono_assay_labelfree(request):
                                 # Add file to zip file with relative path
                                 zip_file.write(file_path, os.path.relpath(file_path, root_results_path))
 
-                return render(request, "assay_api_app/clono_assay_results.html", {
+                return render(request, "assay_api_app/clono_assay_labelfree/clono_assay_results.html", {
                 'results_zipfile': f'{settings.MEDIA_URL}clono_analysis_labelfree/{zip_fname}',
                 })
 
-            return render(request, "assay_api_app/clono_assay_results.html", {
+            return render(request, "assay_api_app/clono_assay_labelfree/clono_assay_results.html", {
             'results_zipfile': None,
             })
         else:
@@ -377,4 +374,4 @@ def clono_assay_labelfree(request):
             print(form.errors)
     else:
         form = forms.FormClonoLabelFree()
-    return render(request, "assay_api_app/clono_assay_labelfree.html", { 'form': form })
+    return render(request, "assay_api_app/clono_assay_labelfree/clono_assay_labelfree.html", { 'form': form })
