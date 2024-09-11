@@ -29,25 +29,35 @@ def generate_unique_id(length=8):
     return unique_id
 
 
-def save_results(res_dict, swarm_data, save_path):
-    # save count data
-    with open(os.path.join(save_patj, f"count_results.json"), 'w') as f:
-        json.dump(res_dict, f)
+def save_results(results_dict, save_path):
+    # Ensure save_path exists
+    os.makedirs(save_path, exist_ok=True)
 
-    # save plot
-    for i, key in enumerate(swarm_data.keys()):
-        ser = pd.Series(swarm_data[key], name=f"area")
-        # fil
-        filt_ser = ser.drop(ser[ser == 0].index)
-        filt_ser.to_csv(os.path.join(out_dir, f"{key}_area.csv"), index=False)
-        plt.figure(figsize=(5, 7))
-        plt.title(ser.name)
-        sns.swarmplot(data=filt_ser, size=1)
-        plt.yticks(np.arange(0, filt_ser.max() + 150, 150))
-        plt.ylabel(f"{key}_area")
-        plt.tight_layout()
-        plt.grid()
-        plt.savefig(os.path.join(out_dir, f"swarmplot{key}_area.pdf"), dpi=150)
+    for key, value in results_dict.items():
+        if isinstance(value, dict):
+            # Save dictionary values as JSON files
+            json_file_path = os.path.join(save_path, f"{key}.json")
+            with open(json_file_path, 'w') as f:
+                json.dump(value, f, indent=4)
+
+        elif isinstance(value, list):
+            # Create and save swarm plot for list values
+            ser = pd.Series(value, name=key)
+            filt_ser = ser[ser != 0]  # Remove zero values for plotting
+            filt_ser.to_csv(os.path.join(save_path, f"{key}.csv"), index=False)
+            plt.figure(figsize=(5, 7))
+            plt.title(ser.name)
+            sns.swarmplot(data=filt_ser, size=1)
+            plt.yticks(np.arange(0, filt_ser.max() + 150, 150))
+            plt.ylabel(key)
+            plt.tight_layout()
+            plt.grid()
+            plt.savefig(os.path.join(save_path, f"{key}_swarmplot.pdf"), dpi=150)
+            plt.close()  # Close the plot to free up memory
+
+        else:
+            print(f"Skipping key '{key}': Unsupported value type.")
+
 
 # create form object for each site and add here
 def cell_count_fluo(request):
@@ -117,9 +127,6 @@ def cell_count_labelfree(request):
 
                 # Save the processed image
                 cv2.imwrite(img_clr_path, img_clr)
-
-                # Provide the path as a reference in the template
-                # img_clr_url = os.path.join(settings.STATIC_URL, 'images', img_clr_name)
 
                 return render(request, "assay_api_app/count_labelfree/cell_count_labelfree_results.html", {
                     'num_cells': num_cells,
@@ -219,8 +226,12 @@ def clono_assay(request):
                     # create results folder
                     well_fld_path = os.path.join(root_results_path, well_id)
                     os.makedirs(well_fld_path)
-                    # res_dict, swarm_data_dict = singleday_analysis(path_lf, path_fluo)
-                    # save_results(res_dict, swarm_data_dict, well_fld_path)
+                    count_dict, swarm_data_list = singleday_analysis(path_lf, path_fluo)
+                    res_dict = {
+                        'count_results': count_dict,
+                        'area': swarm_data_list
+                    }
+                    save_results(res_dict, well_fld_path)
 
                     zip_fname = f"{results_fld_name}.zip"
                     zip_file_path = os.path.join(settings.MEDIA_ROOT, 'clono_analysis', zip_fname)
@@ -242,8 +253,15 @@ def clono_assay(request):
                     os.makedirs(well_fld_path)
                     path_lf_d1, path_fluo_d1 = image_folders_d1[well_id]
                     path_lf_dn, path_fluo_dn = image_folders_dn[well_id]
-                    # res_dict, swarm_data_dict = multiday_analysis(path_lf_d1, path_fluo_d1, path_lf_dn, path_fluo_dn)
-                    # save_results(res_dict, swarm_data_dict, well_fld_path)
+                    data_clono, data_d1, data_dn, area_d1, area_dn = multiday_analysis(path_lf_d1, path_fluo_d1, path_lf_dn, path_fluo_dn)
+                    res_dict = {
+                        'clonogenic_results': data_clono,
+                        'day-1_count_results': data_d1,
+                        'day-n_count_results': data_dn,
+                        'day-1_area': area_d1,
+                        'day-n_area': area_dn
+                    }
+                    save_results(res_dict, well_fld_path)
 
                     zip_fname = f"{results_fld_name}.zip"
                     zip_file_path = os.path.join(settings.MEDIA_ROOT, 'clono_analysis', zip_fname)

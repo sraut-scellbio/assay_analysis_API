@@ -16,15 +16,13 @@ def conv_to_8bit(img):
 def standardize(img, mu, std):
     return (img - mu) / std
 
-def get_normalized_8bit_stack(img_hstack, num_images):
-    img_list = [np.array(img_hstack.get_frame(m=i)) for i in range(num_images)]
-    img_arr = np.transpose(np.dstack(img_list), (2, 0, 1))
+def get_normalized_8bit_stack(img_arr):
     mu = np.mean(img_arr)
     std = np.std(img_arr)
-    norm_arr = (img_arr - mu)/std
-    min_vals = norm_arr.min(axis=(1,2))[:, np.newaxis, np.newaxis]
-    max_vals = norm_arr.max(axis=(1,2))[:, np.newaxis, np.newaxis]
-    norm_arr_scaled = ((norm_arr - min_vals) / (max_vals - min_vals)) * 255
+    std_arr = (img_arr - mu)/std
+    min_vals = std_arr.min(axis=(1,2))[:, np.newaxis, np.newaxis]
+    max_vals = std_arr.max(axis=(1,2))[:, np.newaxis, np.newaxis]
+    norm_arr_scaled = ((std_arr - min_vals) / (max_vals - min_vals)) * 255
     img_stack_8bit = norm_arr_scaled.astype(np.uint8)
     return img_stack_8bit
 
@@ -79,6 +77,3 @@ def preprocess_flo_mask(flo_mask):
     # kernel_close = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5))
     # img_close = cv2.morphologyEx(img_open, cv2.MORPH_CLOSE, kernel_close, iterations=2)
     return img_open
-
-
-

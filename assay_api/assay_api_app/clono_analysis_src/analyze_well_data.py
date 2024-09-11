@@ -259,8 +259,8 @@ def count_cells(well_locs, cell_locs, cell_contours, avg_warea, avg_width):
     return num_cells, total_areas
 
 
-def get_well_data(input_frame):
-    dic_img8, flo_img8 = input_frame
+def get_well_data(input_frames):
+    dic_img8, flo_img8 = input_frames
     est_avg_gap = 17
     well_locs, avg_warea, avg_width, well_mask = get_well_locs(dic_img8, est_avg_gap)
 

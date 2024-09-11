@@ -9,6 +9,19 @@ import matplotlib.pyplot as plt
 from sklearn.mixture import GaussianMixture
 from settings import well_dist_thresh
 
+
+def get_normalized_arr(img_arr):
+    # Convert the list of images to a numpy array (assuming all images have the same shape)
+    images_array = np.array(img_arr)
+
+    # Compute mean and standard deviation
+    mean = np.mean(images_array)
+    std = np.std(images_array)
+
+    # Normalize images (subtract mean and divide by std)
+    img_arr_norm = (images_array - mean) / std
+    return img_arr_norm
+
 def save_swarm_data(dict_file, out_dir, well_name):
     for i, key in enumerate(dict_file.keys()):
         ser = pd.Series(dict_file[key], name=f"{well_name}_{key}")
@@ -281,4 +294,3 @@ def perform_nonmax_suppression(locs, cells=True):
                     break
 
     return repeated_idxs
-

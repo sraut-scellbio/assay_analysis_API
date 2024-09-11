@@ -5,38 +5,72 @@ import json
 import torch
 import numpy as np
 import pandas as pd
+import seaborn as sns
+from PIL import Image
 import multiprocessing
 from cellpose import models
 import matplotlib.pyplot as plt
 from readlif.reader import LifFile
 from preprocess import get_normalized_8bit_stack
-from utils import save_swarm_data, get_class_count
+from utils import save_swarm_data, get_class_count, get_normalized_arr
 from analyze_well_data import get_well_data, get_clonogenic_analysis
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-def get_clonogenic_assay_summary(data_path, well1_name, well2_name):
+def get_images_as_array(fld_path):
+    images = []
+    for root, _, files in os.walk(fld_path):
+        for file in files:
+            file_path = os.path.join(root, file)
+            try:
+                # Attempt to open the file as an image
+                with Image.open(file_path) as img:
+                    # Convert image to numpy array and add to list
+                    img_array = np.array(img)
+                    images.append(img_array)
+            except IOError:
+                # If file is not an image, skip it
+                print(f"Skipping non-image file: {file_path}")
 
-    # read datafile
-    lfile = LifFile(data_path)
-    metadata = lfile.image_list
+    images_arr = np.array(images)
+    return images_arr
 
-    flo_stack_idx_w1 = 4
-    dic_stack_idx_w1 = 2
-    flo_stack_idx_w2 = 4
-    dic_stack_idx_w2 = 2
 
-    swarm_data_w1 = {
-        'w1_count': [],
-        'w1_area': []
-    }
+def save_results(results_dict, save_path):
+    # Ensure save_path exists
+    os.makedirs(save_path, exist_ok=True)
 
-    swarm_data_w2 = {
-        'w2_count': [],
-        'w2_area': []
-    }
+    for key, value in results_dict.items():
+        if isinstance(value, dict):
+            # Save dictionary values as JSON files
+            json_file_path = os.path.join(save_path, f"{key}.json")
+            with open(json_file_path, 'w') as f:
+                json.dump(value, f, indent=4)
 
-    data_well1 = {
+        elif isinstance(value, list):
+            # Create and save swarm plot for list values
+            ser = pd.Series(value, name=key)
+            filt_ser = ser[ser != 0]  # Remove zero values for plotting
+            filt_ser.to_csv(os.path.join(save_path, f"{key}.csv"), index=False)
+            plt.figure(figsize=(5, 7))
+            plt.title(ser.name)
+            sns.swarmplot(data=filt_ser, size=1)
+            plt.yticks(np.arange(0, filt_ser.max() + 150, 150))
+            plt.ylabel(key)
+            plt.tight_layout()
+            plt.grid()
+            plt.savefig(os.path.join(save_path, f"{key}_swarmplot.pdf"), dpi=150)
+            plt.close()  # Close the plot to free up memory
+
+        else:
+            print(f"Skipping key '{key}': Unsupported value type.")
+
+
+def singleday_analysis(path_lf, path_fluo):
+
+    swarm_data_area = []
+
+    data_well = {
         'num_wells_identified': 0,
         'empty_wells': 0,
         'single_cells': 0,
@@ -46,7 +80,57 @@ def get_clonogenic_assay_summary(data_path, well1_name, well2_name):
         'colonies': 0
     }
 
-    data_well2 = {
+
+    lf_stack = get_images_as_array(path_lf)
+    fluo_stack = get_images_as_array(path_fluo)
+
+    # get normlized stack
+    lf_stack_norm = get_normalized_8bit_stack(lf_stack)
+    fluo_stack_norm = get_normalized_8bit_stack(fluo_stack)
+
+    lf_list_8bit = [lf_stack_norm [i, :, :] for i in range(lf_stack_norm.shape[0])]
+    fluo_list_8bit = [fluo_stack_norm[i, :, :] for i in range(fluo_stack_norm.shape[0])]
+
+    model = models.Cellpose(gpu=torch.cuda.is_available(), model_type='cyto2')
+    cellpose_masks = model.eval(lf_list_8bit, diameter=40, channels=[0, 0], do_3D=False)[0]
+
+    with multiprocessing.Pool() as pool:
+        well_locations, cell_counts, total_cell_areas = zip(*pool.map(get_well_data, list(zip(cellpose_masks, fluo_list_8bit))))
+
+
+    # remove empty items
+    well_locations = [ele for ele in well_locations if ele != []]
+    cell_counts = [ele for ele in cell_counts if ele != []]
+    total_cell_areas = [ele for ele in total_cell_areas if ele != []]
+
+    with multiprocessing.Pool() as pool:
+        count_res_arr = np.array(pool.map(get_class_count, cell_counts))
+
+    for j, key in enumerate(data_well.keys()):
+        data_well[key] = int(np.sum(count_res_arr[:, j]))
+
+    for i in range(len(well_locations)):
+        if len(well_locations[i]) > 0 :
+            swarm_data_area.extend(total_cell_areas[i])
+
+    return data_well, swarm_data_area
+
+def multiday_analysis(path_lf_d1, path_fluo_d1, path_lf_dn, path_fluo_dn):
+
+    swarm_data_area_d1 = []
+    swarm_data_area_dn = []
+
+    data_well_d1 = {
+        'num_wells_identified': 0,
+        'empty_wells': 0,
+        'single_cells': 0,
+        'dublets': 0,
+        'triplets': 0,
+        'clusters': 0,
+        'colonies': 0
+    }
+
+    data_well_dn = {
         'num_wells_identified': 0,
         'empty_wells': 0,
         'single_cells': 0,
@@ -63,107 +147,67 @@ def get_clonogenic_assay_summary(data_path, well1_name, well2_name):
         'formed_colonies': 0
     }
 
-    # get hyperstack
-    flo_hstack_w1 = lfile.get_image(flo_stack_idx_w1)
-    dic_hstack_w1 = lfile.get_image(dic_stack_idx_w1)
-    flo_hstack_w2 = lfile.get_image(flo_stack_idx_w2)
-    dic_hstack_w2 = lfile.get_image(dic_stack_idx_w2)
+    lf_stack_d1 = get_images_as_array(path_lf_d1)
+    fluo_stack_d1 = get_images_as_array(path_fluo_d1)
+    lf_stack_dn = get_images_as_array(path_lf_dn)
+    fluo_stack_dn = get_images_as_array(path_fluo_dn)
 
-    # get number of frames and check if they correspond
-    n_images_flo_w1 = metadata[flo_stack_idx_w1]['dims_n'][10]
-    n_images_dic_w1 = metadata[dic_stack_idx_w1]['dims_n'][10]
+    # get normlized stack
+    lf_stack_norm_d1 = get_normalized_8bit_stack(lf_stack_d1)
+    fluo_stack_norm_d1 = get_normalized_8bit_stack(fluo_stack_d1)
+    lf_stack_norm_dn = get_normalized_8bit_stack(lf_stack_dn)
+    fluo_stack_norm_dn = get_normalized_8bit_stack(fluo_stack_dn)
 
-    n_images_flo_w2 = metadata[flo_stack_idx_w2]['dims_n'][10]
-    n_images_dic_w2 = metadata[dic_stack_idx_w2]['dims_n'][10]
+    lf_list_8bit_d1 = [lf_stack_norm_d1[i, :, :] for i in range(lf_stack_norm_d1.shape[0])]
+    fluo_list_8bit_d1 = [fluo_stack_norm_d1[i, :, :] for i in range(fluo_stack_norm_d1.shape[0])]
+    lf_list_8bit_dn = [lf_stack_norm_dn[i, :, :] for i in range(lf_stack_norm_dn.shape[0])]
+    fluo_list_8bit_dn = [fluo_stack_norm_dn[i, :, :] for i in range(fluo_stack_norm_dn.shape[0])]
 
-    # asset if number of frames in well1 and 2 are the same
-    assert (n_images_dic_w1 == n_images_flo_w1 == n_images_dic_w2 == n_images_flo_w2)
-
-    # get normaled image stacks
-    dic_hstack_8bit_w1 = get_normalized_8bit_stack(dic_hstack_w1, n_images_dic_w1)
-    flo_hstack_8bit_w1 = get_normalized_8bit_stack(flo_hstack_w1, n_images_flo_w1)
-    dic_hstack_8bit_w2 = get_normalized_8bit_stack(dic_hstack_w2, n_images_dic_w2)
-    flo_hstack_8bit_w2 = get_normalized_8bit_stack(flo_hstack_w2, n_images_flo_w2)
-
-
-    dic_list_8bit_w1 = [dic_hstack_8bit_w1[i, :, :] for i in range(n_images_dic_w1)]
-    flo_list_8bit_w1 = [flo_hstack_8bit_w1[i, :, :] for i in range(n_images_flo_w1)]
-    dic_list_8bit_w2 = [dic_hstack_8bit_w2[i, :, :] for i in range(n_images_dic_w2)]
-    flo_list_8bit_w2 = [flo_hstack_8bit_w2[i, :, :] for i in range(n_images_flo_w2)]
-
-    # create input lists for multiprocessing
     model = models.Cellpose(gpu=torch.cuda.is_available(), model_type='cyto2')
-    cellpose_masks_w1 = model.eval(dic_list_8bit_w1, diameter=40, channels=[0, 0], do_3D=False)[0]
-    cellpose_masks_w2 = model.eval(dic_list_8bit_w2, diameter=40, channels=[0, 0], do_3D=False)[0]
+    cellpose_masks_d1 = model.eval(lf_list_8bit_d1, diameter=40, channels=[0, 0], do_3D=False)[0]
 
     with multiprocessing.Pool() as pool:
-        w1_well_locations, w1_cell_counts, w1_total_cell_areas = zip(*pool.map(get_well_data, list(zip(cellpose_masks_w1, flo_list_8bit_w1))))
+        well_locations_d1, cell_counts_d1, total_cell_areas_d1 = zip(
+            *pool.map(get_well_data, list(zip(cellpose_masks_d1, fluo_list_8bit_d1))))
 
     # remove empty items
-    w1_well_locations = [ele for ele in w1_well_locations if ele != []]
-    w1_cell_counts = [ele for ele in w1_cell_counts if ele != []]
-    w1_total_cell_areas = [ele for ele in w1_total_cell_areas if ele != []]
+    well_locations_d1 = [ele for ele in well_locations_d1 if ele != []]
+    cell_counts_d1 = [ele for ele in cell_counts_d1 if ele != []]
+    total_cell_areas_d1 = [ele for ele in total_cell_areas_d1 if ele != []]
 
+    cellpose_masks_dn = model.eval(lf_list_8bit_dn, diameter=40, channels=[0, 0], do_3D=False)[0]
+
+    pdb.set_trace()
     with multiprocessing.Pool() as pool:
-        w2_well_locations, w2_cell_counts, w2_total_cell_areas = zip(*pool.map(get_well_data, list(zip(cellpose_masks_w2, flo_list_8bit_w2))))
+        well_locations_dn, cell_counts_dn, total_cell_areas_dn = zip(
+            *pool.map(get_well_data, list(zip(cellpose_masks_dn, fluo_list_8bit_dn))))
 
     # remove empty items
-    w2_well_locations = [ele for ele in w2_well_locations if ele != []]
-    w2_cell_counts = [ele for ele in w2_cell_counts if ele != []]
-    w2_total_cell_areas = [ele for ele in w2_total_cell_areas if ele != []]
+    well_locations_dn = [ele for ele in well_locations_dn if ele != []]
+    cell_counts_dn = [ele for ele in cell_counts_dn if ele != []]
+    total_cell_areas_dn = [ele for ele in total_cell_areas_dn if ele != []]
 
     with multiprocessing.Pool() as pool:
-        count_res_w1_arr = np.array(pool.map(get_class_count, w1_cell_counts))
-        count_res_w2_arr = np.array(pool.map(get_class_count, w2_cell_counts))
+        count_res_arr_d1 = np.array(pool.map(get_class_count, cell_counts_d1))
+        count_res_arr_dn = np.array(pool.map(get_class_count, cell_counts_dn))
 
     # arrange data for clonogenic analysis
-    clono_input = [(w1_well_locations[i], w1_cell_counts[i], w2_well_locations[i], w2_cell_counts[i]) for i in range(len(w1_well_locations))]
+    clono_input = [(well_locations_d1[i], cell_counts_d1[i], well_locations_dn[i], cell_counts_dn[i]) for i in
+                   range(len(well_locations_d1))]
     with multiprocessing.Pool() as pool:
         clonogenic_analysis = np.array(pool.map(get_clonogenic_analysis, clono_input))
 
-    for j, (key_w1, key_w2) in enumerate(zip(data_well1.keys(), data_well2.keys())):
-        data_well1[key_w1] = int(np.sum(count_res_w1_arr[:, j]))
-        data_well2[key_w2] = int(np.sum(count_res_w2_arr[:, j]))
+    for j, (key_d1, key_dn) in enumerate(zip(data_well_d1.keys(), data_well_dn.keys())):
+        data_well_d1[key_d1] = int(np.sum(count_res_arr_d1[:, j]))
+        data_well_dn[key_dn] = int(np.sum(count_res_arr_dn[:, j]))
 
     # update clonogenic analysis results for frame
     for j, key in enumerate(data_clonogenic.keys()):
         data_clonogenic[key] = int(np.sum(clonogenic_analysis[:, j]))
 
-    for i in range(len(w1_well_locations)):
-        if len(w1_well_locations[i]) > 0 and len(w2_well_locations[i]) > 0:
-            swarm_data_w1['w1_count'].extend(w1_cell_counts[i])
-            swarm_data_w1['w1_area'].extend(w1_total_cell_areas[i])
-            swarm_data_w2['w2_count'].extend(w2_cell_counts[i])
-            swarm_data_w2['w2_area'].extend(w2_total_cell_areas[i])
+    for i in range(len(well_locations_d1)):
+        if len(well_locations_d1[i]) > 0 and len(well_locations_dn[i]) > 0:
+            swarm_data_area_d1.extend(total_cell_areas_d1[i])
+            swarm_data_area_dn.extend(total_cell_areas_dn[i])
 
-    return data_well1, data_well2, data_clonogenic, swarm_data_w1, swarm_data_w2
-
-
-def multiday_analysis(path_lf_d1, path_fluo_d1, path_lf_dn, path_fluo_dn):
-    file_name = 'mGBM_50um_day7_TMZ_IR_IMPDH2_Device1.lif'
-    root_dir = 'C:\\Users\\ShiskaRaut\\Desktop\\Projects'
-    data_path = os.path.join(root_dir, 'Data', file_name)
-    well1_name = 'WellA1_cells_mgbm'
-    well2_name = 'WellA2_cells_mgbm'
-
-    data_well1, data_well2, data_clonogenic, swarm_data_w1, swarm_data_w2 = get_clonogenic_assay_summary(data_path, well1_name, well2_name)
-
-    fname_ini = f"{well1_name}_and_{well2_name}"
-    out_dir = os.path.join(os.getcwd(), 'output', fname_ini)
-    os.makedirs(out_dir, exist_ok=True)
-
-    with open(os.path.join(out_dir, f"{well1_name}_results.json"), 'w') as f:
-        json.dump(data_well1, f)
-
-    with open(os.path.join(out_dir, f"{well2_name}_results.json"), 'w') as f:
-        json.dump(data_well2, f, indent=4)
-
-    with open(os.path.join(out_dir, f"clonogenic_results.json"), 'w') as f:
-        json.dump(data_clonogenic, f, indent=4)
-
-    save_swarm_data(swarm_data_w1, out_dir, well1_name)
-    save_swarm_data(swarm_data_w2, out_dir, well2_name)
-
-
-def singleday_analysis(path_lf, path_fluo):
-    pass
+    return data_clonogenic, data_well_d1, data_well_dn, swarm_data_area_d1, swarm_data_area_dn
