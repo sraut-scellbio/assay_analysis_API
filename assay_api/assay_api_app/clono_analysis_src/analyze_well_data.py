@@ -2,9 +2,10 @@ import pdb
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
-from utils import *
-from settings import avg_well_area, avg_cell_area, well_dist_thresh
-from preprocess import conv_to_8bit, preprocess_dic_mask, \
+
+from .utils import *
+from .settings import avg_well_area, avg_cell_area, well_dist_thresh
+from .preprocess import conv_to_8bit, preprocess_dic_mask, \
     otsu_threshold, custom_threshold, preprocess_flo_mask, get_thresh_range
 
 

@@ -7,7 +7,6 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 from sklearn.mixture import GaussianMixture
-from settings import well_dist_thresh
 
 
 def get_normalized_arr(img_arr):

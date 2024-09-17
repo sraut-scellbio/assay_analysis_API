@@ -11,9 +11,10 @@ import multiprocessing
 from cellpose import models
 import matplotlib.pyplot as plt
 from readlif.reader import LifFile
-from preprocess import get_normalized_8bit_stack
-from utils import save_swarm_data, get_class_count, get_normalized_arr
-from analyze_well_data import get_well_data, get_clonogenic_analysis
+
+from .preprocess import get_normalized_8bit_stack
+from .utils import save_swarm_data, get_class_count, get_normalized_arr
+from .analyze_well_data import get_well_data, get_clonogenic_analysis
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
