@@ -7,6 +7,7 @@ body {
     margin: 0;
     font-family: Arial, sans-serif; */
     background-color: #f4f4f4;
+    background: url('');
     background-size: contain;
 }
 
@@ -64,9 +65,4 @@ img {
 
 .nav-link {
     margin-right: 15px; /* Adds spacing between navbar items */
-}
-
-.res-img {
-    width: 100px;
-    height: 100px;
 }

@@ -3,30 +3,30 @@
   {% load static %}
   {% block custom_functions %}
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="{% static 'css/clono_assay_labelfree.css' %}">
-    <script src="{% static 'scr/clono_assay_labelfree.js' %}"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/dormancy_assay.css' %}">
+    <script src="{% static 'scr/clono_assay.js' %}" type="text/javascript"></script>
     <title>File Upload</title>
   {% endblock %}
 
   {% block body_block %}
-    <div class="container" align="left">
-      <h1>Clonogenic Assay Label-free Count</h1>
+    <div class="container" id="upload-container" align="left">
+      <h1>Dormancy Assay Labeled Count</h1>
       <br>
-      <form id="files-upload-form" class="clono_assay" method="post" enctype="multipart/form-data">
+      <form id="files-upload-form" class="dormancy_assay" method="post" enctype="multipart/form-data">
         {% csrf_token %}
         {{ form.name.label_tag }} {{ form.name }} <br><br>
         {{ form.cell_line.label_tag }} {{ form.cell_line }} <br><br>
         {{ form.magnification.label_tag }} {{ form.magnification }} <br><br>
         {{ form.num_wells.label }} {{ form.num_wells }} <br><br>
         {{ form.analysis_type.label }} {{ form.analysis_type }} <br><br>
-        <h4>Provide path to .zip folder containing <span style="color: red;">LABEL-FREE</span> images: </h4><br>
+        <h4>Provide path to .zip folder containing <span style="color: red;">FLUORESCENT</span> images: </h4><br>
         <table class="image-inputs">
           <thead>
             <tr>
               <th></th>
               <th class="label">Day 1</th>
               <th class="label">Day n</th>
-            </tr
+            </tr>
           </thead>
           <tbody>
             <tr>
@@ -34,12 +34,12 @@
               <div class="w1">
                 <td>
                     <div class="d-1">
-                      {{ form.w1_d1_lf.label_tag }} {{ form.w1_d1_lf }}<br>
+                      {{ form.w1_d1_fluo.label_tag }} {{ form.w1_d1_fluo }}<br>
                     </div>
                 </td>
                 <td>
                   <div class="d-n">
-                    {{ form.w1_dn_lf.label_tag }} {{ form.w1_dn_lf }}<br>
+                    {{ form.w1_dn_fluo.label_tag }} {{ form.w1_dn_fluo }}<br>
                   </div>
                 </td>
               </div>
@@ -49,12 +49,12 @@
               <div class="w2">
                 <td>
                   <div class="d-1">
-                    {{ form.w2_d1_lf.label_tag }} {{ form.w2_d1_lf }}<br>
+                    {{ form.w2_d1_fluo.label_tag }} {{ form.w2_d1_fluo }}<br>
                   </div>
                 </td>
                 <td>
                   <div class="d-n">
-                    {{ form.w2_dn_lf.label_tag }} {{ form.w2_dn_lf }}<br>
+                    {{ form.w2_dn_fluo.label_tag }} {{ form.w2_dn_fluo }}<br>
                   </div>
                 </td>
               </div>
@@ -64,12 +64,12 @@
               <div class="w3">
                 <td>
                   <div class="d-1">
-                    {{ form.w3_d1_lf.label_tag }} {{ form.w3_d1_lf }}<br>
+                    {{ form.w3_d1_fluo.label_tag }} {{ form.w3_d1_fluo }}<br>
                   </div>
                 </td>
                 <td>
                   <div class="d-n">
-                    {{ form.w3_dn_lf.label_tag }} {{ form.w3_dn_lf }}<br>
+                    {{ form.w3_dn_fluo.label_tag }} {{ form.w3_dn_fluo }}<br>
                   </div>
                 </td>
               </div>
@@ -79,19 +79,18 @@
               <div class="w4">
                 <td>
                   <div class="d-1">
-                    {{ form.w4_d1_lf.label_tag }} {{ form.w4_d1_lf }}<br>
+                    {{ form.w4_d1_fluo.label_tag }} {{ form.w4_d1_fluo }}<br>
                   </div>
                 </td>
                 <td>
                   <div class="d-n">
-                    {{ form.w4_dn_lf.label_tag }} {{ form.w4_dn_lf }}<br>
+                    {{ form.w4_dn_fluo.label_tag }} {{ form.w4_dn_fluo }}<br>
                   </div>
                 </td>
               </div>
             </tr>
           </tbody>
         </table>
-        <br>
         <input id="submit-btn" type="submit" class="btn btn-primary" name="submit" value="Submit">
       </form>
     </div>
@@ -105,20 +104,20 @@
 
         // Enable the submit button when an image is selected
         fileInput.addEventListener('change', function() {
-            if (this.files.length > 0) {
-                submitButton.disabled = false;
-            }
+          if (this.files.length > 0) {
+              submitButton.disabled = false;
+          }
         });
 
         // Add an event listener to the form, not the button, to handle submission
         const form = document.getElementById('files-upload-form');
-
         form.addEventListener('submit', function(event) {
-            // Disable the button to prevent multiple submissions
-            submitButton.disabled = true;
 
-            // Optionally, change the button text to indicate the action
-            submitButton.value = "Submitting...";
+          // Disable the button to prevent multiple submissions
+          submitButton.disabled = true;
+
+          // Optionally, change the button text to indicate the action
+          submitButton.value = "Submitting...";
         });
       });
     </script>

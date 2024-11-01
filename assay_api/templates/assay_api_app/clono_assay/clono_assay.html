@@ -10,26 +10,62 @@
 
   {% block body_block %}
     <div class="container" id="upload-container" align="left">
-      <h1>Clonogenic Analysis(Label-free + Fluorescent)</h1>
+      <h1>Clonogenic Assay Labeled Count</h1>
       <br>
+      <div class="upload-instructions">
+        <h5>Upload Instructions: </h5>
+        <ol>
+          <li>Data for each well should be in its own .zip folder.</li>
+          <li>Create separate .zip folders for labeled and fluorescent images.</li>
+          <li>Sample Directory Structure:</li>
+          <div class="tree">
+            <ul>
+                <li>
+                    <span class="folder">wellA_dapi.zip</span>
+                    <ul>
+                        <li><span class="file"><a href="#">img1.png</a></span></li>
+                        <li><span class="file"><a href="#">img2.png</a></span></li>
+                    </ul>
+                </li>
+                <li>
+                    <span class="folder">wellA_labelfree.zip</span>
+                    <ul>
+                        <li><span class="file"><a href="#">img1.png</a></span></li>
+                        <li><span class="file"><a href="#">img2.png</a></span></li>
+                    </ul>
+                </li>
+            </ul>
+          </div>
+        </div>
+        </ol>
+      </div>
+      
       <form id="files-upload-form" class="clono_assay" method="post" enctype="multipart/form-data">
         {% csrf_token %}
-        {{ form.name.label_tag }} {{ form.name }} <br><br>
-        {{ form.cell_line.label_tag }} {{ form.cell_line }} <br><br>
-        {{ form.num_wells.label }} {{ form.num_wells }} <br><br>
-        {{ form.analysis_type.label }} {{ form.analysis_type }} <br><br>
-        <h4>Provide path to .zip folder containing well images: </h4><br>
+        <div class="form-row">
+          <div>{{ form.name.label_tag }} {{ form.name }}</div>
+          <div>{{ form.cell_line.label_tag }} {{ form.cell_line }}</div>
+        </div>
+        <br>
+        {{ form.magnification.label_tag }} {{ form.magnification }} 
+        <br><br>
+        <div class="form-row">
+          <div>{{ form.num_wells.label }} {{ form.num_wells }}</div>
+          <div>{{ form.analysis_type.label }} {{ form.analysis_type }}</div>
+        </div>
+        <br><br>
+        <h4>Provide path to .zip folder containing images: </h4><br>
         <table class="image-inputs">
           <thead>
             <tr>
               <th></th>
               <th class="label">Day 1</th>
               <th class="label">Day n</th>
-            </tr
+            </tr>
           </thead>
           <tbody>
             <tr>
-              <th class="label">Well 1  </th>
+              <th class="label">Well A  </th>
               <div class="w1">
                 <td>
                     <div class="d-1">
@@ -46,7 +82,7 @@
               </div>
             </tr>
             <tr>
-              <th class="label">Well 2  </th>
+              <th class="label">Well B  </th>
               <div class="w2">
                 <td>
                   <div class="d-1">
@@ -63,7 +99,7 @@
               </div>
             </tr>
             <tr>
-              <th class="label">Well 3  </th>
+              <th class="label">Well C  </th>
               <div class="w3">
                 <td>
                   <div class="d-1">
@@ -80,7 +116,7 @@
               </div>
             </tr>
             <tr>
-              <th class="label">Well 4  </th>
+              <th class="label">Well D  </th>
               <div class="w4">
                 <td>
                   <div class="d-1">
@@ -128,4 +164,128 @@
         });
       });
     </script>
+    <style>
+
+      /* Style for the upload button */
+      body {
+          /* display: flex;
+          justify-content: center;
+          align-items: center;
+          height: 100vh;
+          margin: 0;
+          font-family: Arial, sans-serif; */
+          background-color: #f4f4f4;
+          background-size: contain;
+      }
+
+      th {
+        padding: 10px;
+      }
+
+      .tab4 {
+            tab-size: 8;
+        }
+
+      td, tr {
+        height: 40px;
+      }
+
+      .upload-button {
+          display: inline-block;
+          padding: 10px 20px;
+          font-size: 16px;
+          color: white;
+          background-color: #007bff;
+          border: none;
+          border-radius: 5px;
+          cursor: pointer;
+          transition: background-color 0.3s;
+      }
+
+      .upload-button:hover {
+          background-color: #0056b3;
+      }
+
+      .file-input {
+          display: none;
+      }
+
+      .preview {
+          margin-top: 20px;
+      }
+
+      .navbar{
+        margin: 10px;
+      }
+
+      .navbar-brand{
+        margin-left:50px !important;
+      }
+
+      .nav-link {
+        margin-right: 15px; /* Adds spacing between navbar items */
+      }
+
+      .tree ul {
+        list-style-type: none;
+        position: relative;
+        padding-left: 20px;
+      }
+      
+      .tree li {
+        margin: 0;
+        padding: 10px 0;
+        position: relative;
+      }
+      
+      .tree li::before, .tree li::after {
+        content: '';
+        position: absolute;
+        left: -20px;
+      }
+      
+      /* Connecting lines */
+      .tree li::before {
+        border-left: 1px solid #ccc;
+        bottom: 50px;
+        height: 100%;
+        top: 0;
+        width: 1px;
+      }
+      
+      .tree li::after {
+        border-top: 1px solid #ccc;
+        height: 20px;
+        top: 15px;
+        width: 25px;
+      }
+      
+      /* Remove connecting lines from last child */
+      .tree li:last-child::before {
+        height: 20px;
+      }
+      
+      .tree li a {
+        color: blue;
+        text-decoration: underline;
+        cursor: pointer;
+        font-family: Arial, sans-serif;
+      }
+      
+      .tree li .folder::before {
+        content: '📁 ';
+        font-weight: bold;
+      }
+      
+      .tree li .file::before {
+        content: '📄 ';
+        font-weight: normal;
+      }
+
+      .form-row {
+        display: flex;
+        gap: 30px; /* Adjusts space between elements */
+        align-items: center; /* Aligns label and input fields vertically */
+      }
+    </style>
   {% endblock %}

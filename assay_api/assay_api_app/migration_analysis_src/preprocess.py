@@ -1,23 +1,8 @@
-import cv2
 import math
+import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.mixture import GaussianMixture
-
-def preprocess_img(img):
-    img_med = cv2.medianBlur(img, 7)
-    gau = cv2.blur(img_med, (7, 7))
-    return gau
-
-def get_normalized_8bit_stack(img_arr):
-    mu = np.mean(img_arr)
-    std = np.std(img_arr)
-    std_arr = (img_arr - mu)/std
-    min_vals = std_arr.min(axis=(1, 2))[:, np.newaxis, np.newaxis]
-    max_vals = std_arr.max(axis=(1, 2))[:, np.newaxis, np.newaxis]
-    norm_arr_scaled = ((std_arr - min_vals) / (max_vals - min_vals)) * 255
-    img_stack_8bit = norm_arr_scaled.astype(np.uint8)
-    return img_stack_8bit
 
 def get_thresh_range(img, n_comp=2):
     gmm = GaussianMixture(n_components=n_comp)
@@ -26,28 +11,20 @@ def get_thresh_range(img, n_comp=2):
     std_devs = gmm.covariances_ ** 0.5
     mean = means[np.argmax(means), 0]
     std = std_devs[np.argmax(means), 0, 0]
+    thresh_range = (math.ceil(mean - std), math.floor(mean + std))
     return mean, std
 
+def preprocess_binary_mask(mask, perform_watershed=True):
 
-def custom_threshold(img, th1=100, th2=255, inv=False):
-    if inv:
-        _, th = cv2.threshold(img, th1, th2, cv2.THRESH_BINARY_INV)
-    else:
-        _, th = cv2.threshold(img, th1, th2, cv2.THRESH_BINARY)
-    th = th.astype('uint8')
-    return th
-
-def preprocess_binary_mask(mask, perform_watershed=False):
-
-    kernel_close = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (3, 3))
-    img_close = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel_close, iterations=1)
     kernel_open = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (3, 3))
-    img_open = cv2.morphologyEx(img_close, cv2.MORPH_OPEN, kernel_open, iterations=2)
+    img_open = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel_open, iterations=1)
+    kernel_close = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (3, 3))
+    img_close = cv2.morphologyEx(img_open, cv2.MORPH_CLOSE, kernel_close, iterations=1)
 
     if perform_watershed:
         # get sure foreground
         kernel_er = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5))
-        img_er = cv2.erode(img_open, kernel_er, iterations=1)
+        img_er = cv2.erode(img_close, kernel_er, iterations=1)
         kernel_open = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (3, 3))
         img_open = cv2.morphologyEx(img_er, cv2.MORPH_OPEN, kernel_open, iterations=5)
         kernel_oper = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (3, 3))
@@ -66,3 +43,35 @@ def preprocess_binary_mask(mask, perform_watershed=False):
         # if iou_val > 0.2:
         return final_mask
     return img_open
+
+def get_normalized_8bit_list(img_list):
+
+    img_norm_list = []
+    n_items =len(img_list)
+    mu = 0
+    std = 0
+    for img_arr in img_list:
+        mu += np.mean(img_arr)
+        std += np.std(img_arr)
+
+    mu = mu/n_items
+    std = std/n_items
+
+    for img_arr in img_list:
+        std_arr = (img_arr - mu)/std
+        min_vals = std_arr.min()
+        max_vals = std_arr.max()
+        norm_arr_scaled = ((std_arr - min_vals) / (max_vals - min_vals)) * 255
+        img_8bit = norm_arr_scaled.astype(np.uint8)
+        img_norm_list.append(img_8bit)
+    return img_norm_list
+
+
+def custom_threshold(img, th1=100, th2=220, inv=False):
+    if inv:
+        _, th = cv2.threshold(img, th1, th2, cv2.THRESH_BINARY_INV)
+    else:
+        _, th = cv2.threshold(img, th1, th2, cv2.THRESH_BINARY)
+    th = th.astype('uint8')
+    return th
+

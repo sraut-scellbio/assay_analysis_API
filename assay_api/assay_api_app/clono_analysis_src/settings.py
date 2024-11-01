@@ -1,3 +1,11 @@
-avg_well_area = 6600
-well_dist_thresh = 90
-avg_cell_area = 40
+well_area = {
+    "10": [6000, 9000],
+}
+
+well_width = {
+    "10": [77, 95],
+}
+
+cell_area = {
+    "10": [40, 190],
+}

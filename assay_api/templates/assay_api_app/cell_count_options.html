@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+{% extends "assay_api_app/base.html" %}
+  {% load static %}
+  {% block custom_functions %}
+    <link rel="stylesheet" href="{% static 'css/scellbio_landing.css' %}">
+    <title>singlecell assay analysis</title>
+    <script src="{% static 'scr/scellbio_landing.js' %}"></script>
+  {% endblock %}
+
+  {% block body_block %}
+    <div class="assay-container" align="center">
+      <h2>Automated Cell Counting</h2>
+        <button class="btn btn-primary btn-lg" onclick="location.href='{% url 'assay_api_app:cell_count_fluo' %}'">Labeled/Stained Iamges </button>
+        <button class="btn btn-secondary btn-lg" onclick="location.href='{% url 'assay_api_app:cell_count_labelfree' %}'">Label-free Images</button>
+    </div>
+  {% endblock %}

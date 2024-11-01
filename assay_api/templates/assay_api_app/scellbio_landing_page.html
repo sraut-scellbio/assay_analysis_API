@@ -9,10 +9,9 @@
 
   {% block body_block %}
     <div class="assay-container" align="center">
-      <h2>Automated Assay Analysis</h2>
-        <button class="btn btn-primary btn-lg" onclick="location.href='{% url 'assay_api_app:cell_count_fluo' %}'">Cell counting </button>
-        <button class="btn btn-primary btn-lg" onclick="location.href='{% url 'assay_api_app:cell_count_labelfree' %}'">Cell counting (label-free)</button>
-        <button class="btn btn-primary btn-lg" onclick="location.href='{% url 'assay_api_app:clono_assay' %}'">Clonogenic analysis</button>
-        <button class="btn btn-primary btn-lg" onclick="location.href='{% url 'assay_api_app:clono_assay_labelfree' %}'">Clonogenic analysis (label-free)
+        <button class="btn btn-primary btn-lg" onclick="location.href='{% url 'assay_api_app:cell_count_options' %}'">Cell counting </button>
+        <button class="btn btn-primary btn-lg" onclick="location.href='{% url 'assay_api_app:clono_assay_options' %}'">Clonogenic Assay Analysis</button>
+        <button class="btn btn-primary btn-lg" onclick="location.href='{% url 'assay_api_app:migration_assay' %}'">Migration Assay Analysis</button>
+        <button class="btn btn-primary btn-lg" onclick="location.href='{% url 'assay_api_app:dormancy_assay_options' %}'">Dormancy Assay Analysis</button>
     </div>
   {% endblock %}
