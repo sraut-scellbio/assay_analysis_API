@@ -2,6 +2,8 @@ downloads/
 *.pyc
 images/
 media/
+models/
+staticfiles/
 .idea/
 *.xml
 *.sqlite3
